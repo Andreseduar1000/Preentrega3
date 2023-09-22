@@ -22,7 +22,6 @@ function carrito(e){
     }
     // ACA SE ENVIAN LOS DATOS AL ARREGLO
     arreglo_carrito.push(paquetes);
-
     revisar_carrito();
     json();
 
@@ -56,6 +55,7 @@ function revisar_carrito(){
         tabla.append(fila);
         
     }
+    
     let borrarboton = document.querySelectorAll(".btnbtn");
 
     for( let btn of borrarboton){
