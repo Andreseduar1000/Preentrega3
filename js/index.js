@@ -1,5 +1,7 @@
 let arreglo_carrito=[];
+let carritonuevo=[];
 
+document.addEventListener("DOMContentLoaded",recuperar_datos());
 
 function carrito(e){
 
@@ -10,13 +12,13 @@ function carrito(e){
 
     let nombrePaquete= padre.querySelector("h5").innerText;
     let preciopaquete=padre.querySelector("span").innerText;
-    let imgproducto=abuelo.querySelector("img").src;
+    let imgpaquete=abuelo.querySelector("img").src;
 
 
     let paquetes={
         nombre:nombrePaquete,
         precio:preciopaquete,
-        img:imgproducto,
+        img:imgpaquete,
         cantidad:1
 
     }
@@ -25,26 +27,56 @@ function carrito(e){
     revisar_carrito();
     json();
 
-
 }
 
+// ENVIAMOS LOS DATOS A LOCALSTORAGE
 function json(){
     let carritoJson=JSON.stringify(arreglo_carrito);
     localStorage.setItem("paquetes",carritoJson);
-
-    let recuperar_paquetes= localStorage.getItem("paquetes");
-    let paquete_parseado=JSON.parse(recuperar_paquetes);
-    console.log(paquete_parseado);
-
+    
+    
 }
+
+//RECOLECTA DATOS DEL LOCALSTORAGE Y IMPRIME SI SE RENUEVA LA PAGINA
+function recuperar_datos (){
+    if (localStorage.getItem("paquetes")){
+
+        let recuperar_paquetes= localStorage.getItem("paquetes");
+        let paquete_parseado=JSON.parse(recuperar_paquetes);
+        console.log(paquete_parseado);
+
+        let tabla2=document.getElementById("tbody");
+
+        for (let elementos of paquete_parseado){
+
+            let fila2= document.createElement("tr");
+            fila2.innerHTML = `<td><img src="${elementos.img}"style="width: 8rem;"></td>
+                        <td style="font-size: 15px;"><p>${elementos.nombre}</p></td>
+                        <td style="font-size: 15px;">${elementos.cantidad}</td>
+                        <td style="font-size: 15px;">${elementos.precio}</td>
+                        <td><button class="btn btn-danger btnbtn">Borrar</button></td>`;
+        tabla2.append(fila2);
+
+        }
+        let borrarboton = document.querySelectorAll(".btnbtn");
+
+        for( let btn of borrarboton){
+            btn.addEventListener("click" , borrarpaquete );
+        }
+
+        
+
+    }
+}
+
+
 
 //IMPRESION DE CARRITO
 function revisar_carrito(){
     let tabla = document.getElementById("tbody");
-
     tabla.innerHTML = "";
 
-    for( let paquetes of arreglo_carrito ){
+    for( paquetes of arreglo_carrito){
 
         let fila = document.createElement("tr");
         fila.innerHTML = `<td><img src="${paquetes.img}"style="width: 8rem;"></td>
@@ -60,6 +92,7 @@ function revisar_carrito(){
 
     for( let btn of borrarboton){
         btn.addEventListener("click" , borrarpaquete );
+
     }
 
 }
@@ -69,13 +102,13 @@ function revisar_carrito(){
 
 //BORRAR ARTICULOS DEL CARRITO
 function borrarpaquete(e){
-    console.log("Se elimino: ", e.target );
-
+    //console.log("Se elimino: ", e.target );
     let abuelo = e.target.parentNode.parentNode;
     let eliminar=abuelo.querySelector("p").innerText;
     console.log(eliminar);
     
     abuelo.remove();
+    
 
     function eliminarPaquete(paquetes){
         return paquetes.nombre != eliminar;
@@ -83,6 +116,10 @@ function borrarpaquete(e){
 
     let busquedafilter=arreglo_carrito.filter(eliminarPaquete);
     arreglo_carrito=busquedafilter;
+// SE VA ACTUALIZANDO LOCALSTORAGE CADA VEZ QUE SE BORRA ELEMENTO
+    json();
+    
+    
     
 }
 
@@ -100,6 +137,7 @@ for( let botones of btnCompra ){
 
     botones.addEventListener("click",carrito);
 }
+
 //MOSTRAR BOTON
 let boton_mostrar=document.getElementById("btnhola");
 boton_mostrar.addEventListener("click",mostrar);
